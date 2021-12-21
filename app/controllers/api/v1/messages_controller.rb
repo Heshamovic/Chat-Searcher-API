@@ -26,7 +26,6 @@ module Api
         render json: { status: 'SUCCESS', message: msg[0].body }, status: :ok
       end
 
-      
       def create
         if params[:app_token].blank?
           return render json: { status: 'ERROR', error: 'Provide app_token' }, status: :unprocessable_entity
@@ -41,20 +40,23 @@ module Api
         app = helper.get_app(params[:app_token])
         return render json: { status: 'ERROR', error: 'Application doesn\'t exist' }, status: :not_found if app.blank?
 
-        ActiveRecord::Base.connection.execute('LOCK TABLES chats WRITE')
+
         chat = Chat.where(number: params[:chat_number], app_id: app[0].id).first
         return render json: { status: 'ERROR', error: 'Chat doesn\'t exist' }, status: :not_found if chat.blank?
 
-        msg.number = chat.messages_count + 1
-        msg.chat_id = chat.id
-        msg.body = params[:body]
-        if msg.save
-          chat.update_column('messages_count', chat.messages_count + 1)
+        chat.with_lock do
+
+          msg.number = chat.messages_count + 1
+          msg.chat_id = chat.id
+          msg.body = params[:body]
+          if msg.save
+            chat.update_column('messages_count', chat.messages_count + 1)
+            ActiveRecord::Base.connection.execute('UNLOCK TABLES')
+            return render json: { status: 'SUCCESS', message: 'Message Created Successfully', message_number: msg.number }, status: :created
+          end
           ActiveRecord::Base.connection.execute('UNLOCK TABLES')
-          return render json: { status: 'SUCCESS', message: 'Message Created Successfully', message_number: msg.number }, status: :created
+          render json: { status: 'ERROR', message: 'Message not Created', error: msg.errors }, status: :unprocessable_entity
         end
-        ActiveRecord::Base.connection.execute('UNLOCK TABLES')
-        render json: { status: 'ERROR', message: 'Message not Created', error: msg.errors }, status: :unprocessable_entity
       end
 
       def update
