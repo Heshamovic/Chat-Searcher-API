@@ -5,7 +5,7 @@ All you have to do to install and run the API is just to the following docker co
 
 The API will run on port 3001. There you can send all your requests.
 
-## InstDocker Command
+## Install using Docker
 
     docker-compose up
 
