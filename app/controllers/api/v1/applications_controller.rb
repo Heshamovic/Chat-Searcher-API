@@ -14,7 +14,7 @@ module Api
         app = Application.new
         app.token = Digest::MD5.hexdigest(params[:name] + Time.now.getutc.to_s)
         app.name = params[:name]
-        return render json: {status: 'SUCCESS', message: 'Application Created Successfully', app_token: app.token}, status: :ok if app.save
+        return render json: {status: 'SUCCESS', message: 'Application Created Successfully', app_token: app.token}, status: :created if app.save
 
         render json: {status: 'ERROR', message: 'Application not Created', data: app.errors }, status: :unprocessable_entity
       end
@@ -26,7 +26,7 @@ module Api
         return render json: { status: 'ERROR', error: 'Application doesn\'t exist' }, status: :not_found if app.blank?
 
         app.name = params[:name]
-        return render json: { status: 'SUCCESS', message: 'Application Updated Successfully' }, status: :ok if app.save
+        return render json: { status: 'SUCCESS', message: 'Application Updated Successfully' }, status: :reset_content if app.save
 
         render json: { status: 'ERROR', message: 'Application not Updated', error: msg.errors }, status: :unprocessable_entity
       end
