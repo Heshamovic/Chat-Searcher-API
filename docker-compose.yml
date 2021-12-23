@@ -12,7 +12,7 @@ services:
         ports:
             - "3307:3306"
         volumes:
-            - ./init.sql:/data/application/init.sql
+            - ./init.sql:/data/application/init.sql:rw,delegated
             - my-datavolume:/var/lib/mysql
 
     app:
