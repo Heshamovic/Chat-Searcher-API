@@ -26,6 +26,32 @@ Each application has a field called chats_count that contains the number of chat
 
 # API Requests
 
+## Search in a specific chat messages
+
+### Request
+
+`GET /chat_search/`
+
+    GET: http://localhost:3001/api/v1/chat_search
+    json: {
+		"app_token": "ee45002f91762826506285b98278fbc8",
+		"chat_number": 1,
+		"search_text": "you"
+	}
+
+### Response
+
+    Status: 200 ok
+    Content-Type: application/json
+    content: {
+		"status": "SUCCESS",
+		"msgs_found": {
+			"5": "fine thank you",
+			"6": "fine thank you",
+			"4": "hey How are you?"
+		}
+	}
+
 ## Create a New Application
 
 ### Request
@@ -145,13 +171,16 @@ Each application has a field called chats_count that contains the number of chat
 		"chat_number": 1
 	}
 
-## Get a Specific Application
+## Get a Specific Chat
 
 ### Request
 
-`GET /Applications/token`
+`GET /chats/chat_number`
 
-    GET: http://localhost:3001/api/v1/applications/{app_token}
+    GET: http://localhost:3001/api/v1/chats/{chat_number}
+    json: {
+    	"app_token": "eb9e05a7f66ad2ff3cdfda0a51aa139d"
+    }
 
 ### Response
 
@@ -159,21 +188,24 @@ Each application has a field called chats_count that contains the number of chat
     Content-Type: application/json
     content: {
 		"status": "SUCCESS",
-		"application": {
-			"name": "Test 1",
-			"chats_count": 0
+		"chat": {
+			"number": 1,
+			"messages_count": 5
 		}
 	}
 
-## Get a non-existent Application
+## Get a non-existent chat
 
 ### Request
 
-`GET /Applications/token`
+`GET /chats/chat_number`
 
-    GET: http://localhost:3001/api/v1/applications/{non-existant_app_token}
+    GET: http://localhost:3001/api/v1/chats/{non-existant_chat_number}
+    json: {
+    	"app_token": "eb9e05a7f66ad2ff3cdfda0a51aa139d"
+    }
 
-### Response
+### Response if provided app token is wrong
 
     Status: 404 Not Found
     Content-Type: application/json
@@ -182,16 +214,49 @@ Each application has a field called chats_count that contains the number of chat
 		"error": "Application doesn't exist"
 	}
 
-## Change application's name
+### Response if provided chat number is wrong
+
+    Status: 404 Not Found
+    Content-Type: application/json
+    content: {
+		"status": "ERROR",
+		"error": "Chat doesn't exist"
+	}
+
+## Create a New Message
 
 ### Request
 
-`PATCH /Applications/token`
+`POST /messages/`
 
-    PATCH: http://localhost:3001/api/v1/applications/{app_token}
+    POST: http://localhost:3001/api/v1/messages
     json: {
-		"name": "Test 1 updated app successfully" 
+		"app_token": "ee45002f91762826506285b98278fbc8",
+		"chat_number": 1,
+		"body": "fine thank you"
 	}
+
+### Response
+
+    Status: 201 Created
+    Content-Type: application/json
+    content: {
+		"status": "SUCCESS",
+		"message": "Message Created Successfully",
+		"message_number": 2
+	}
+
+## Get a Specific Message
+
+### Request
+
+`GET /messages/message_number`
+
+    GET: http://localhost:3001/api/v1/messages/{message_number}
+    json: {
+		"app_token": "ee45002f91762826506285b98278fbc8",
+		"chat_number": 1
+    }
 
 ### Response
 
@@ -199,25 +264,61 @@ Each application has a field called chats_count that contains the number of chat
     Content-Type: application/json
     content: {
 		"status": "SUCCESS",
-		"message": "Application Updated Successfully"
+		"message": "Message 1 updated"
 	}
 
-## Change non-existant application's name
+## Get a non-existent Message
 
 ### Request
 
-`PATCH /Applications/token`
+`GET /messages/message_number`
 
-    PATCH: http://localhost:3001/api/v1/applications/{wrong_app_token}
+    GET: http://localhost:3001/api/v1/messages/{non-existent_message_number}
     json: {
-		"name": "Test 1 updated app successfully" 
-	}
+		"app_token": "ee45002f91762826506285b98278fbc8",
+		"chat_number": 1
+    }
 
-### Response
+### Response if provided app token is wrong
 
     Status: 404 Not Found
     Content-Type: application/json
     content: {
 		"status": "ERROR",
-		"message": "Application doesn't exist"
+		"error": "Application doesn't exist"
 	}
+
+### Response if provided chat number is wrong
+
+    Status: 404 Not Found
+    Content-Type: application/json
+    content: {
+		"status": "ERROR",
+		"error": "Chat doesn't exist"
+	}
+
+
+### Response if provided message number is wrong
+
+    Status: 404 Not Found
+    Content-Type: application/json
+    content: {
+		"status": "ERROR",
+		"error": "Message doesn't exist"
+	}
+
+## Change Message's body
+
+### Request
+
+`PATCH /messages/message_number`
+
+    PATCH: http://localhost:3001/api/v1/chats/{message_number}
+    json: {
+		"app_token": "ee45002f91762826506285b98278fbc8",
+		"chat_number": 1,
+		"body": "Message 1 updated"
+	}
+
+### If any of the json parameters isn't send, you will get 422 Unprocessable Entity error with the missing parameter
+
