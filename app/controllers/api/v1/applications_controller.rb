@@ -26,7 +26,7 @@ module Api
         return render json: { status: 'ERROR', error: 'Application doesn\'t exist' }, status: :not_found if app.blank?
 
         app.name = params[:name]
-        return render json: { status: 'SUCCESS', message: 'Application Updated Successfully' }, status: :reset_content if app.save
+        return render json: { status: 'SUCCESS', message: 'Application Updated Successfully' }, status: :ok if app.save
 
         render json: { status: 'ERROR', message: 'Application not Updated', error: msg.errors }, status: :unprocessable_entity
       end

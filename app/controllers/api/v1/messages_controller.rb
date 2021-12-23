@@ -68,7 +68,7 @@ module Api
         return render json: { status: 'ERROR', error: 'Message doesn\'t exist' }, status: :not_found if msg.blank?
 
         msg.body = params[:body]
-        return render json: { status: 'SUCCESS', message: 'Message Updated Successfully' }, status: :reset_content if msg.save
+        return render json: { status: 'SUCCESS', message: 'Message Updated Successfully' }, status: :ok if msg.save
 
         render json: { status: 'ERROR', message: 'Message not Updated', error: msg.errors }, status: :unprocessable_entity
 
