@@ -1,11 +1,6 @@
 module Api
   module V1
     class ChatsController < ApplicationController
-      def index
-        chats = Chat.order('number, app_id')
-        render json: {status: 'SUCCESS', message: 'Loaded Chats', data:chats}, status: :ok
-      end
-
       def show
         return render json: { status: 'ERROR', error: 'Provide app token' }, status: :unprocessable_entity if params[:app_token].blank?
 

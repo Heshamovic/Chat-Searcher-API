@@ -1,13 +1,6 @@
 module Api
   module V1
     class MessagesController < ApplicationController
-      def index
-        all_info = Message.order('number, chat_id')
-        msgs = []
-        all_info.each { |x| msgs.append({ number: x['number'], message: x['body'] }) }
-        render json: { status: 'SUCCESS', messages: msgs}, status: :ok
-      end
-
       def show
         return render json: { status: 'ERROR', error: 'Provide app token' }, status: :unprocessable_entity if params[:app_token].blank?
 
