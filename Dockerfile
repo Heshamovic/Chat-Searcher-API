@@ -7,7 +7,6 @@ WORKDIR /app
 
 COPY Gemfile ./
 COPY Gemfile.lock ./
-COPY initelastic.sh /usr/local/bin/
 
 RUN bundle install
 
