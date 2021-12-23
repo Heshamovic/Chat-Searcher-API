@@ -11,7 +11,14 @@ module Api
 
         msgs_found = (Message.search query: {
           bool: {
-            filter: [{ match_phrase_prefix: { body: { query: params[:search_text] } } }, { term: { chat_id: { value: chat[0].id } } }]
+            must: {
+              match_phrase: {
+                body: params[:search_text]
+              }
+            },
+            filter: {
+              term: { chat_id: chat[0].id }
+            }
           }
         }, fields: %w[chat_id body number]).results
 
